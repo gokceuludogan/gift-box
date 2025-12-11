@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐬 Project: UNSTOPPABLE</title>
+    <style>
+        :root {
+            --ocean-dark: #0f2027;
+            --ocean-mid: #203a43;
+            --ocean-light: #2c5364;
+            --accent: #4facfe;
+            --accent-glow: #00f2fe;
+            --text: #ffffff;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Courier New', Courier, monospace;
+            background: linear-gradient(to bottom, var(--ocean-dark), var(--ocean-light));
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            user-select: none;
+        }
+
+        /* Bubbles Animation */
+        .bubble {
+            position: absolute;
+            bottom: -50px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: rise 10s infinite ease-in;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        @keyframes rise {
+            0% { bottom: -50px; transform: translateX(0); }
+            50% { transform: translateX(20px); }
+            100% { bottom: 110vh; transform: translateX(-20px); }
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            background: rgba(15, 32, 39, 0.85);
+            padding: 2.5rem;
+            border-radius: 20px;
+            border: 1px solid rgba(79, 172, 254, 0.3);
+            box-shadow: 0 0 50px rgba(79, 172, 254, 0.2);
+            text-align: center;
+            max-width: 450px;
+            width: 90%;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease;
+        }
+
+        h1 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--accent);
+            text-shadow: 0 0 10px rgba(79, 172, 254, 0.5);
+        }
+
+        .status-badge {
+            background: rgba(255, 71, 87, 0.2);
+            color: #ff6b81;
+            border: 1px solid #ff4757;
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* DOLPHIN & FEEDING STYLES */
+        .visual-wrapper {
+            position: relative;
+            height: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .dolphin-visual {
+            font-size: 5rem;
+            display: inline-block;
+            animation: float 4s ease-in-out infinite;
+            filter: drop-shadow(0 10px 10px rgba(0,0,0,0.5));
+            z-index: 2;
+            transition: transform 0.1s;
+        }
+
+        /* The 'Gulp' Animation class added by JS */
+        .dolphin-gulp {
+            animation: gulp 0.4s ease-in-out !important;
+        }
+
+        @keyframes gulp {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3) rotate(-10deg); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
+            50% { transform: translateY(-15px) rotate(5deg) scale(1.05); }
+        }
+
+        /* The Flying Fish */
+        .snack {
+            position: absolute;
+            font-size: 2rem;
+            z-index: 1;
+            opacity: 1;
+            pointer-events: none;
+            /* Animation is defined in JS to handle dynamic start points */
+        }
+
+        /* BUTTON STYLES */
+        .feed-btn {
+            background: linear-gradient(135deg, var(--accent), #00f2fe);
+            border: none;
+            border-radius: 50px;
+            padding: 12px 25px;
+            color: #0f2027;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
+            transition: transform 0.1s, box-shadow 0.2s;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .feed-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(79, 172, 254, 0.6);
+        }
+
+        .feed-btn:active {
+            transform: translateY(1px);
+        }
+
+        .feed-counter {
+            font-size: 0.7rem;
+            color: var(--accent-glow);
+            margin-top: 5px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            text-align: left;
+            background: rgba(0,0,0,0.2);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px dashed rgba(255,255,255,0.1);
+            padding-bottom: 8px;
+        }
+        .data-row:last-child { border-bottom: none; padding-bottom: 0; }
+
+        .label { 
+            color: #8899a6; 
+            font-size: 0.75rem; 
+            text-transform: uppercase; 
+            letter-spacing: 1px;
+        }
+        
+        .value { 
+            color: var(--accent-glow); 
+            font-weight: bold; 
+            font-size: 0.95rem;
+            text-align: right;
+            max-width: 70%;
+        }
+
+        .log-container {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 3px solid var(--accent);
+        }
+
+        .log-entry {
+            font-family: 'Courier New', Courier, monospace;
+            font-style: italic;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: #eee;
+        }
+
+        .footer {
+            margin-top: 30px;
+            font-size: 0.65rem;
+            color: rgba(255,255,255,0.2);
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="status-badge" id="status-badge">SIGNAL: ENCRYPTED</div>
+        <h1>Subject: "Breezy"</h1>
+        
+        <div class="visual-wrapper" id="scene">
+            <div class="dolphin-visual" id="dolphin">🐬</div>
+        </div>
+
+        <button class="feed-btn" onclick="feedDolphin()">
+            <span>🐟</span> SEND FISH
+        </button>
+        <div class="feed-counter" id="counter-display"> Snacks sent: 0</div>
+
+        <div class="data-grid">
+            <div class="data-row">
+                <span class="label">DATE</span>
+                <span class="value" id="date-display">...</span>
+            </div>
+            <div class="data-row">
+                <span class="label">LOCATION</span>
+                <span class="value" id="loc-display">Triangulating...</span>
+            </div>
+            <div class="data-row">
+                <span class="label">DEPTH</span>
+                <span class="value" id="depth-display">---</span>
+            </div>
+            <div class="data-row">
+                <span class="label">STATE</span>
+                <span class="value" id="mood-display">Loading...</span>
+            </div>
+        </div>
+
+        <div class="log-container">
+            <div class="log-entry" id="log-display">
+                "Establishing secure connection..."
+            </div>
+        </div>
+
+        <div class="footer">
+            TRACKING ID: #CUSTOMS_EVADER_v2.0 <br>
+            STATUS: DIGITAL DELIVERY 100% <br>
+            Hosting provided by the World Wide Ocean
+        </div>
+    </div>
+
+<script>
+    // --- DATASETS ---
+    const locations = [
+        "The Great Barrier Reef Firewall", "Pacific Ocean (Incognito Mode)", "Mariana Web Trench", "The Cloud (Cumulonimbus)", 
+        "Bermuda Triangle Proxy Server", "Underneath a Carnival Cruise Ship", "Chasing a Nuclear Submarine", "Atlantis Gift Shop (Aisle 4)", 
+        "Mediterranean Server Farm", "Amazon River (Prime Route)", "The Specific Pixel at 1024x768", "North Sea Oil Rig WiFi", 
+        "Gulf of Mexico (VPN Active)", "Caribbean Pirate Bay", "Indian Ocean Fiber Optic Cable", "Antarctic Ice Shelf Cooling System", 
+        "Panama Canal Toll Booth", "Loch Ness (Visiting a Cousin)", "Baltic Sea Data Pipeline", "Red Sea (Saturation: 100%)", 
+        "Dead Sea (Floating Mode)", "Caspian Sea (Landlocked Error)", "Lake Baikal (Freshwater Update)", "Niagara Falls (High Bandwidth)", 
+        "Galapagos Islands (Beta Testing Evolution)", "Bering Strait Bridge", "Cape of Good Hope", "Strait of Gibraltar", 
+        "Suez Canal (Stuck behind a boat)", "Hudson River", "Thames Estuary", "Seine River (Romantic Mode)", "Danube River", 
+        "Volga River", "Yangtze River", "Mekong Delta", "Ganges River", "Nile River (Upload Stream)", "Victoria Falls", 
+        "Angel Falls", "Iguazu Falls", "Great Blue Hole", "Shark Bay", "Bay of Fundy", "San Francisco Bay (Tech Support)", 
+        "Tokyo Bay (Anime Arc)", "Sydney Harbour", "Persian Gulf", "Gulf of Alaska", "Gulf of California", "Sea of Japan", 
+        "South China Sea", "East Siberian Sea", "Laptev Sea", "Kara Sea", "Barents Sea", "Norwegian Sea", "Greenland Sea", 
+        "Labrador Sea", "Sargasso Sea (Weed Control)", "Celtic Sea", "Irish Sea", "English Channel (Chunnel Surfing)", 
+        "Bay of Biscay", "Tyrrhenian Sea", "Ionian Sea", "Adriatic Sea", "Aegean Sea", "Sea of Marmara", "Black Sea", 
+        "Sea of Azov", "White Sea", "Yellow Sea", "East China Sea", "Philippine Sea", "Coral Sea", "Tasman Sea", 
+        "Solomon Sea", "Bismarck Sea", "Arafura Sea", "Timor Sea", "Java Sea", "Celebes Sea", "Sulu Sea", "Andaman Sea", 
+        "Laccadive Sea", "Arabian Sea", "Oman Gulf", "Aden Gulf", "Red Sea (Parting Algorithm)", "Mozambique Channel", 
+        "Madagascar Coast", "Mauritius Lagoons", "Seychelles Archipelago", "Maldives Atolls", "Hawaii (Big Island Server)", 
+        "Fiji (Water Brand HQ)", "Tahiti", "Bora Bora", "Cook Islands", "Samoa", "Tonga Trench", "Kermadec Trench", 
+        "Puerto Rico Trench", "Java Trench", "Sandwich Trench", "Eurasian Basin"
+    ];
+
+    const moods = [
+        "Sassy", "Hungry for Bytes", "Majestic", "Evasive", "Turbo Speed", "Sleepy", "Playful", "Rebellious", 
+        "Buffering...", "Compiling...", "Encrypted", "404: Chill Not Found", "High Latency", "Low Ping", "Overclocked", 
+        "Liquid Cooled", "Defragmenting", "Rendering", "Uploading", "Downloading Snacks", "Syncing with Moon", 
+        "Solar Powered", "Hydrodynamic", "Aerodynamic", "Glitchy", "Pixelated", "High Definition", "4K Resolution", 
+        "VR Ready", "Augmented Reality", "Artificial Intelligence", "Natural Intelligence", "Zero Gravity", "Hyperactive", 
+        "Zen Mode", "Meditating", "Plotting World Domination", "Seeking Wi-Fi", "Dodging Nets", "Chasing Boats", 
+        "Surfing Wakes", "Bubble Blowing", "Echolocating", "Singing (Badly)", "Dancing", "Napping", "Dreaming of Fish", 
+        "Judging Plastic", "Recycling", "Updating Firmware", "Installing Updates", "Rebooting", "Crashing", "Lagging", 
+        "Gliding", "Diving Deep", "Breaching", "Splashing", "Sunbathing", "Stargazing", "Moonwalking", "Breakdancing", 
+        "Beatboxing", "Rapping", "Podcasting", "Streaming", "Vlogging", "Influencing", "Trending", "Viral", "Meme-worthy", 
+        "Iconic", "Legendary", "Mythical", "Cryptid", "Ghostly", "Invisible", "Camouflaged", "Neon", "Bioluminescent", 
+        "Electric", "Magnetic", "Sonic", "Supersonic", "Hypersonic", "Subsonic", "Ultrasonic", "Infrasonic", "Radioactive", 
+        "Toxic (Britney Spears Version)", "Salty", "Sweet", "Sour", "Bitter", "Umami", "Spicy", "Cold", "Hot", "Lukewarm", 
+        "Tepid", "Freezing", "Boiling", "Steaming", "Icy", "Slushy"
+    ];
+
+    const logs = [
+        "Narrowly avoided a customs inspection boat.", "Currently teaching a tuna how to code in Python.", 
+        "Attempting to eat a submarine cable to get faster internet.", "Found a plastic bag, disapproved, threw it back on land.", 
+        "Doing backflips for better Wi-Fi signal reception.", "Hiding inside a JPEG of the ocean.", "Planning world domination via sonar network.", 
+        "Just vibing with a sea turtle named Steve.", "Decrypted a message in a bottle. It was spam.", "Trying to find Nemo. He's very good at hiding.", 
+        "Race against a jet ski. Won easily.", "Found Atlantis. It's surprisingly gentrified.", "Argued with a crab about blockchain.", 
+        "Interpreting whale songs. It's mostly jazz.", "Stole a GoPro from a surfer. The footage is fire.", "Dodged a drone. Felt like The Matrix.", 
+        "Hacked into a buoy to change the weather report.", "Streaming 4K video of a coral reef to aliens.", "Tried to order pizza. Delivery guy couldn't find the ocean.", 
+        "Meditating on the concept of 'dryness'.", "Writing a memoir: 'So Long, and Thanks for All the Fish'.", "Debugging a school of fish. They had synchronization issues.", 
+        "Overheard a sailor telling a bad joke. Groaned in sonar.", "Playing hide and seek with a nuclear submarine.", "Found a sunken ship. No gold, just rusty spoons.", 
+        "Judging a jellyfish for having no brain.", "Singing the Jaws theme song to scare swimmers.", "Organizing a union for exploited aquarium workers.", 
+        "Contemplating the vastness of the digital ocean.", "Updating my privacy settings to 'Deep Sea'.", "Trolling a fishing boat by stealing the bait.", 
+        "Converting plankton into cryptocurrency.", "Watching 'The Little Mermaid' and critiquing the accuracy.", "Inventing a new color that only mantis shrimp can see.", 
+        "Practicing synchronized swimming with a plastic bag.", "Calculating the trajectory of a falling coconut.", "Wondering if birds are real or just government drones.", 
+        "Trying to explain water to a flying fish.", "Laughing at a boat stuck in low tide.", "Photobombing a scuba diver's selfie.", 
+        "Measuring the pH level of the ocean with my tongue.", "Chasing a laser pointer from a passing cruise ship.", "Trying to friend request a seal.", 
+        "Blocked a shark on social media.", "Downloaded a car. 3D printing it now.", "Searching for the edge of the map.", "Wondering why the sky is blue.", 
+        "Thinking about buying a boat. Just for irony.", "Running a marathon. Underwater.", "Holding my breath for a new record.", 
+        "Trying to communicate with a buoy.", "Mistook a submarine for a giant metal whale.", "Asked a starfish for directions.", "Got tangled in seaweed. Played it off like a dance move.", 
+        "Found a message in a bottle. It was an expired coupon.", "Racing a torpedo. It's cheating.", "Trying to synchronize swim with a squid.", 
+        "Watching the sunset from below.", "Wondering if sand is just tiny rocks.", "Tried to use a clam as a phone.", "The water is nice today.", 
+        "Feeling cute, might breach later.", "Sending sonar pings to space.", "Trying to teach a lobster to high five.", "Wondering if humans can see me.", 
+        "Hiding in the kelp forest.", "Playing tag with a manta ray.", "Found a sunken treasure chest. It was locked.", "Trying to open a jar of pickles.", 
+        "Wondering where all the bubbles come from.", "Chasing my own tail.", "Trying to catch a wave.", "Wondering if I left the stove on.", 
+        "Thinking about the meaning of life.", "Trying to learn Spanish from a dictionary found on the seabed.", "Wondering if clouds are made of cotton candy.", 
+        "Trying to balance a ball on my nose.", "Wondering if I can fly.", "Trying to walk on land.", "Wondering if I'm a fish or a mammal.", 
+        "Trying to make friends with a seagull.", "Wondering if the ocean has a bottom.", "Trying to find the Titanic.", "Wondering if icebergs are just giant ice cubes.", 
+        "Trying to swim around the world.", "Wondering if I can swim to the moon.", "Trying to catch a falling star.", "Wondering if the sun is hot.", 
+        "Trying to touch the horizon.", "Wondering if the world is flat.", "Trying to swim through a rainbow.", "Wondering if I can breathe fire.", 
+        "Trying to become a mermaid.", "Wondering if I can talk to animals.", "Trying to control the weather.", "Wondering if I can time travel.", 
+        "Trying to teleport.", "Wondering if I'm invisible.", "Trying to read minds.", "Wondering if I have superpowers.", 
+        "Trying to save the world.", "Wondering if I'm a hero."
+    ];
+
+    // --- TRACKING ENGINE ---
+
+    function seededRandom(seed) {
+        let x = Math.sin(seed++) * 10000;
+        return x - Math.floor(x);
+    }
+
+    function updateTracker() {
+        const today = new Date();
+        const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('date-display').innerText = today.toLocaleDateString('en-US', dateOptions);
+
+        const seedString = today.getFullYear() + "" + (today.getMonth() + 1) + "" + today.getDate();
+        const seed = parseInt(seedString);
+
+        const locIndex = Math.floor(seededRandom(seed) * locations.length);
+        const moodIndex = Math.floor(seededRandom(seed + 100) * moods.length);
+        const logIndex = Math.floor(seededRandom(seed + 200) * logs.length);
+        const depthVal = Math.floor(seededRandom(seed + 300) * 4000) + 10;
+        
+        document.getElementById('loc-display').innerText = locations[locIndex];
+        document.getElementById('mood-display').innerText = moods[moodIndex];
+        document.getElementById('depth-display').innerText = depthVal + " meters";
+        document.getElementById('log-display').innerText = `"${logs[logIndex]}"`;
+
+        const day = today.getDay(); 
+        const badge = document.getElementById('status-badge');
+        
+        if(day === 0 || day === 6) {
+            badge.innerText = "WEEKEND PROTOCOL: RELAX";
+            badge.style.borderColor = "#2ed573";
+            badge.style.color = "#2ed573";
+            badge.style.backgroundColor = "rgba(46, 213, 115, 0.2)";
+        } else if (day === 1) {
+            badge.innerText = "MONDAY DIAGNOSTICS";
+            badge.style.borderColor = "#ffa502";
+            badge.style.color = "#ffa502";
+            badge.style.backgroundColor = "rgba(255, 165, 2, 0.2)";
+        } else {
+            badge.innerText = "SIGNAL: ENCRYPTED";
+            badge.style.borderColor = "#ff4757";
+            badge.style.color = "#ff6b81";
+            badge.style.backgroundColor = "rgba(255, 71, 87, 0.2)";
+        }
+    }
+
+    // --- FEEDING ENGINE (New!) ---
+    let snacks = 0;
+    const fishTypes = ["🐟", "🐠", "🐡", "🦐", "🦑"];
+
+    function feedDolphin() {
+        const dolphin = document.getElementById('dolphin');
+        const scene = document.getElementById('scene');
+        
+        // 1. Create Fish
+        const fish = document.createElement('div');
+        fish.className = 'snack';
+        fish.innerText = fishTypes[Math.floor(Math.random() * fishTypes.length)];
+        
+        // 2. Random Start Position (Left or Right of dolphin)
+        // scene width is 100%, let's spawn it offset from center
+        const startSide = Math.random() > 0.5 ? 'left' : 'right';
+        const startX = startSide === 'left' ? -100 : 100; // px offset
+        const startY = Math.floor(Math.random() * 50) - 25; // Slight vertical random
+        
+        fish.style.transform = `translate(${startX}px, ${startY}px)`;
+        scene.appendChild(fish);
+
+        // 3. Animate Fish towards Center (0,0)
+        // We use Web Animations API for dynamic values
+        const swim = fish.animate([
+            { transform: `translate(${startX}px, ${startY}px) scale(1)`, opacity: 1 },
+            { transform: `translate(0px, 0px) scale(0.5)`, opacity: 0 }
+        ], {
+            duration: 600,
+            easing: 'ease-in'
+        });
+
+        // 4. Trigger Dolphin Gulp when fish arrives
+        swim.onfinish = () => {
+            fish.remove();
+            
+            // Add gulp class, remove it after animation
+            dolphin.classList.remove('dolphin-gulp'); 
+            void dolphin.offsetWidth; // Trigger reflow
+            dolphin.classList.add('dolphin-gulp');
+            
+            // Update counter
+            snacks++;
+            const counter = document.getElementById('counter-display');
+            counter.innerText = `Snacks sent: ${snacks}`;
+            counter.style.opacity = 1;
+        };
+    }
+
+    // --- VISUALS ---
+    function createBubbles() {
+        const body = document.body;
+        for (let i = 0; i < 20; i++) {
+            let bubble = document.createElement('div');
+            bubble.className = 'bubble';
+            let size = Math.random() * 15 + 5 + 'px';
+            bubble.style.width = size;
+            bubble.style.height = size;
+            bubble.style.left = Math.random() * 100 + 'vw';
+            bubble.style.animationDuration = (Math.random() * 10 + 5) + 's';
+            bubble.style.animationDelay = Math.random() * 5 + 's';
+            body.appendChild(bubble);
+        }
+    }
+
+    // Initialize
+    updateTracker();
+    createBubbles();
+
+</script>
+</body>
+</html>
