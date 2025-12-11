@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>❤️ The Depot of Affection ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #ffe6ea;
+            --card-bg: #fff0f3;
+            --accent: #ff4757;
+            --text: #2f3542;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            font-family: 'Fredoka', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text);
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* --- FLOATING HEARTS BACKGROUND --- */
+        .heart-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .heart {
+            position: absolute;
+            bottom: -100px;
+            font-size: 2rem;
+            color: rgba(255, 71, 87, 0.4);
+            animation: floatUp 10s linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* --- MAIN CONTAINER --- */
+        .container {
+            position: relative;
+            z-index: 10;
+            max-width: 600px;
+            width: 90%;
+            margin-top: 50px;
+            margin-bottom: 50px;
+            text-align: center;
+        }
+
+        .header-card {
+            background: #ffffff;
+            border-radius: 30px;
+            padding: 40px 20px;
+            box-shadow: 0 10px 25px rgba(255, 71, 87, 0.2);
+            border: 4px solid var(--accent);
+            margin-bottom: 30px;
+            animation: popIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        h1 {
+            color: var(--accent);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #57606f;
+        }
+
+        .cat-frame {
+            margin: 20px auto;
+            width: 250px;
+            height: 250px;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 3px dashed var(--accent);
+            background: #eee;
+        }
+
+        .cat-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .love-note {
+            margin-top: 20px;
+            font-weight: 600;
+            color: var(--accent);
+            font-size: 1.2rem;
+            background: #ffeaa7;
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 15px;
+            transform: rotate(-2deg);
+        }
+
+        /* --- GIFT MENU --- */
+        .gift-menu {
+            display: grid;
+            gap: 20px;
+        }
+
+        .gift-item {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            text-decoration: none;
+            color: var(--text);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .gift-item:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 20px rgba(255, 71, 87, 0.2);
+            border-color: var(--accent);
+        }
+
+        .gift-icon {
+            font-size: 2.5rem;
+            margin-right: 15px;
+        }
+
+        .gift-info {
+            text-align: left;
+            flex-grow: 1;
+        }
+
+        .gift-title {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .gift-desc {
+            font-size: 0.9rem;
+            color: #747d8c;
+        }
+
+        .arrow {
+            font-size: 1.5rem;
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        /* --- FOOTER --- */
+        .footer {
+            margin-top: 50px;
+            font-size: 0.8rem;
+            color: #a4b0be;
+            padding-bottom: 20px;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="heart-bg" id="heart-container"></div>
+
+    <div class="container">
+        
+        <div class="header-card">
+            <h1>Welcome, Human!</h1>
+            <p class="subtitle">
+                You have stumbled upon a highly sophisticated repository of weird things I made because my brain refuses to be normal.
+            </p>
+
+            <div class="cat-frame">
+                <img src="https://cataas.com/cat/gif" alt="A randomly generated cute cat, hopefully not biting anything">
+            </div>
+
+            <p class="subtitle">
+                If you are reading this, it means you have been gifted. <br>
+                Please accept these digital artifacts as proof of my affection.
+            </p>
+
+            <div class="love-note">
+                ✨ Spoiler: I love you so much it's annoying ✨
+            </div>
+        </div>
+
+        <div class="gift-menu">
+
+            <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" class="gift-item">
+                <div class="gift-icon">🎲</div>
+                <div class="gift-info">
+                    <span class="gift-title">Mystery Door</span>
+                    <span class="gift-desc">Do not click this. Seriously.</span>
+                </div>
+                <div class="arrow">→</div>
+            </a>
+
+        </div>
+
+        <div class="footer">
+            Built with 💖 and too much caffeine <br>
+            © 2025 The "I Tried" Corporation
+        </div>
+
+    </div>
+
+<script>
+    // --- BACKGROUND HEART GENERATOR ---
+    function createHearts() {
+        const container = document.getElementById('heart-container');
+        const heartCount = 20; // Number of hearts on screen
+
+        for (let i = 0; i < heartCount; i++) {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.innerHTML = Math.random() > 0.5 ? '❤️' : '💖'; // Randomize heart type
+            
+            // Random positioning and timing
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = Math.random() * 5 + 5 + 's'; // 5 to 10 seconds
+            heart.style.animationDelay = Math.random() * 5 + 's';
+            heart.style.fontSize = Math.random() * 20 + 20 + 'px'; // Varied sizes
+            
+            container.appendChild(heart);
+        }
+    }
+
+    createHearts();
+</script>
+
+</body>
+</html>
