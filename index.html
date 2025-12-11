@@ -78,8 +78,43 @@
             margin-bottom: 10px;
             text-transform: uppercase;
             letter-spacing: 2px;
+            line-height: 1.2;
         }
 
+        /* --- GÖKÇE SIGNATURE STYLE --- */
+        .vip-signature {
+            background: linear-gradient(45deg, #FF9A8B, #FF6A88, #FF99AC, #a18cd1, #fbc2eb);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
+            display: inline-block;
+            cursor: pointer;
+            animation: shine 3s linear infinite;
+            transition: transform 0.2s;
+            position: relative;
+            font-size: 1.5rem;
+            user-select: none;
+        }
+
+        .vip-signature:hover {
+            transform: scale(1.1) rotate(-2deg);
+        }
+
+        .vip-signature::after {
+            content: '✨';
+            font-size: 1.2rem;
+            position: absolute;
+            top: -15px;
+            right: -10px;
+            -webkit-text-fill-color: initial;
+        }
+
+        @keyframes shine {
+            to { background-position: 200% center; }
+        }
+
+        /* --- REST OF CSS --- */
         .subtitle {
             font-size: 1.1rem;
             line-height: 1.6;
@@ -94,6 +129,7 @@
             overflow: hidden;
             border: 3px dashed var(--accent);
             background: #eee;
+            position: relative;
         }
 
         .cat-frame img {
@@ -106,15 +142,14 @@
             margin-top: 20px;
             font-weight: 600;
             color: var(--accent);
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             background: #ffeaa7;
             display: inline-block;
-            padding: 5px 15px;
+            padding: 8px 15px;
             border-radius: 15px;
             transform: rotate(-2deg);
         }
 
-        /* --- GIFT MENU --- */
         .gift-menu {
             display: grid;
             gap: 20px;
@@ -140,38 +175,15 @@
             border-color: var(--accent);
         }
 
-        .gift-icon {
-            font-size: 2.5rem;
-            margin-right: 15px;
-        }
+        .gift-icon { font-size: 2.5rem; margin-right: 15px; }
+        .gift-info { text-align: left; flex-grow: 1; }
+        .gift-title { font-weight: bold; font-size: 1.2rem; margin-bottom: 5px; display: block; }
+        .gift-desc { font-size: 0.9rem; color: #747d8c; }
+        .arrow { font-size: 1.5rem; color: var(--accent); font-weight: bold; }
 
-        .gift-info {
-            text-align: left;
-            flex-grow: 1;
-        }
-
-        .gift-title {
-            font-weight: bold;
-            font-size: 1.2rem;
-            margin-bottom: 5px;
-            display: block;
-        }
-
-        .gift-desc {
-            font-size: 0.9rem;
-            color: #747d8c;
-        }
-
-        .arrow {
-            font-size: 1.5rem;
-            color: var(--accent);
-            font-weight: bold;
-        }
-
-        /* --- FOOTER --- */
         .footer {
             margin-top: 50px;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             color: #a4b0be;
             padding-bottom: 20px;
         }
@@ -179,6 +191,31 @@
         @keyframes popIn {
             0% { transform: scale(0.5); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
+        }
+        
+        /* Sparkle animation elements - UPDATED FOR EXPLOSION EFFECT */
+        .sparkle {
+            position: absolute;
+            pointer-events: none;
+            /* Use ease-out for an explosive "pop" feel */
+            animation: explode 1.5s ease-out forwards;
+            font-size: 3.5rem; /* Very big */
+            z-index: 9999;
+            /* Center the anchor point so they spin correctly */
+            transform-origin: center center;
+        }
+
+        @keyframes explode {
+            0% { 
+                /* Start at origin, small, no rotation */
+                transform: translate(-50%, -50%) translate(0, 0) scale(0.5) rotate(0deg); 
+                opacity: 1; 
+            }
+            100% { 
+                /* Move to destination variables, grow larger, rotate */
+                transform: translate(-50%, -50%) translate(var(--destX), var(--destY)) scale(1.2) rotate(180deg); 
+                opacity: 0; 
+            }
         }
 
     </style>
@@ -192,24 +229,43 @@
         <div class="header-card">
             <h1>Welcome, Human!</h1>
             <p class="subtitle">
-                You have stumbled upon a highly sophisticated repository of weird things I made because my brain refuses to be normal.
+                You have stumbled upon the <strong>Depot of Affection</strong>. This is where I store the weird things I make because my brain refuses to be normal.
             </p>
 
             <div class="cat-frame">
-                <img src="https://cataas.com/cat/gif" alt="A randomly generated cute cat, hopefully not biting anything">
+                <img src="https://cataas.com/cat/gif?t=1" alt="A randomly generated cute cat">
             </div>
 
             <p class="subtitle">
                 If you are reading this, it means you have been gifted. <br>
-                Please accept these digital artifacts as proof of my affection.
+                Please accept these digital artifacts as proof that I was thinking about you.
             </p>
 
             <div class="love-note">
-                ✨ Spoiler: I love you so much it's annoying ✨
+                With chaotic love,<br>
+                <span class="vip-signature" onclick="sparkleName(event)">Gökçe</span>
             </div>
         </div>
 
         <div class="gift-menu">
+            <!-- --- GIFT ITEMS 
+            <a href="dolphin-tracker.html" class="gift-item">
+                <div class="gift-icon">🐬</div>
+                <div class="gift-info">
+                    <span class="gift-title">Project: UNSTOPPABLE</span>
+                    <span class="gift-desc">For the package that never arrived.</span>
+                </div>
+                <div class="arrow">→</div>
+            </a>
+            
+            <a href="card-collection.html" class="gift-item">
+                <div class="gift-icon">🃏</div>
+                <div class="gift-info">
+                    <span class="gift-title">Fate Deck 2026</span>
+                    <span class="gift-desc">Draw a card, predict your future.</span>
+                </div>
+                <div class="arrow">→</div>
+            </a> --->
 
             <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" class="gift-item">
                 <div class="gift-icon">🎲</div>
@@ -223,8 +279,8 @@
         </div>
 
         <div class="footer">
-            Built with 💖 and too much caffeine <br>
-            © 2025 The "I Tried" Corporation
+            © 2025 Gökçe's Weird Ideas Inc. <br>
+            <i>(Click my name above for a surprise)</i>
         </div>
 
     </div>
@@ -233,20 +289,59 @@
     // --- BACKGROUND HEART GENERATOR ---
     function createHearts() {
         const container = document.getElementById('heart-container');
-        const heartCount = 20; // Number of hearts on screen
+        const heartCount = 20;
 
         for (let i = 0; i < heartCount; i++) {
             const heart = document.createElement('div');
             heart.classList.add('heart');
-            heart.innerHTML = Math.random() > 0.5 ? '❤️' : '💖'; // Randomize heart type
-            
-            // Random positioning and timing
+            heart.innerHTML = Math.random() > 0.5 ? '❤️' : '💖';
             heart.style.left = Math.random() * 100 + 'vw';
-            heart.style.animationDuration = Math.random() * 5 + 5 + 's'; // 5 to 10 seconds
+            heart.style.animationDuration = Math.random() * 5 + 5 + 's';
             heart.style.animationDelay = Math.random() * 5 + 's';
-            heart.style.fontSize = Math.random() * 20 + 20 + 'px'; // Varied sizes
-            
+            heart.style.fontSize = Math.random() * 20 + 20 + 'px';
             container.appendChild(heart);
+        }
+    }
+
+    // --- NAME SPARKLE EFFECT (UPDATED FOR WIDE EXPLOSION) ---
+    function sparkleName(e) {
+        const emojis = ['✨', '🌸', '💖', '🦄', '🐈', '🌈', '🔥', '💎', '🎉', '🧚‍♀️', '🍭'];
+        const rect = e.target.getBoundingClientRect();
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+        
+        // Calculate center of the clicked element
+        const startX = rect.left + scrollLeft + rect.width / 2;
+        const startY = rect.top + scrollTop + rect.height / 2;
+
+        // Increased particle count
+        for (let i = 0; i < 35; i++) {
+            const el = document.createElement('div');
+            el.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+            el.className = 'sparkle';
+            
+            // Set starting position
+            el.style.left = startX + 'px';
+            el.style.top = startY + 'px';
+
+            // --- CALCULATE EXPLOSION DESTINATION ---
+            // Random angle (0 to 360 degrees in radians)
+            const angle = Math.random() * Math.PI * 2;
+            // Random distance (between 50px and 350px away)
+            const distance = Math.random() * 300 + 50;
+
+            // Calculate destination X and Y using trigonometry
+            const destX = Math.cos(angle) * distance + 'px';
+            const destY = Math.sin(angle) * distance + 'px';
+
+            // Set CSS variables for the animation
+            el.style.setProperty('--destX', destX);
+            el.style.setProperty('--destY', destY);
+            
+            document.body.appendChild(el);
+            
+            // Remove after animation (1.5s)
+            setTimeout(() => el.remove(), 1500);
         }
     }
 
