@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐝 The Bee Sanctuary 🌸</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sky-top: #A1C4FD;
+            --sky-bottom: #C2E9FB;
+            --earth-top: #5D9C59;
+            --earth-bottom: #3E2723;
+            --text-color: #2f3542;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Comfortaa', cursive;
+            display: flex;
+            flex-direction: column;
+            user-select: none;
+        }
+
+        /* --- INTRO MODAL --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            backdrop-filter: blur(8px);
+            transition: opacity 0.5s ease;
+        }
+
+        .intro-box {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            max-width: 500px;
+            width: 80%;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            border: 5px solid var(--earth-top);
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .intro-box h2 {
+            color: var(--earth-top);
+            margin-top: 0;
+            font-size: 1.8rem;
+        }
+
+        .intro-box p {
+            color: #555;
+            line-height: 1.6;
+            font-size: 1.1rem;
+            margin: 20px 0;
+        }
+
+        .start-btn {
+            background: var(--earth-top);
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+            box-shadow: 0 5px 15px rgba(93, 156, 89, 0.4);
+            font-family: 'Comfortaa', cursive;
+        }
+
+        .start-btn:hover {
+            transform: scale(1.05);
+            background: #4a804a;
+        }
+
+        .modal-hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        /* --- THE TWO WORLDS --- */
+        .world-container {
+            position: relative;
+            flex-grow: 1;
+            width: 100%;
+            height: 100%;
+        }
+
+        .sky-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60%;
+            background: linear-gradient(to bottom, var(--sky-top), var(--sky-bottom));
+            z-index: 1;
+            cursor: crosshair;
+        }
+
+        .earth-layer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40%;
+            background: linear-gradient(to bottom, var(--earth-top), var(--earth-bottom));
+            z-index: 2;
+            cursor: cell;
+            box-shadow: 0 -20px 50px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        /* --- UI ELEMENTS --- */
+        .ui-panel {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 20px;
+            z-index: 100;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            max-width: 300px;
+        }
+
+        h1 { margin: 0 0 10px 0; font-size: 1.2rem; color: #2d3436; }
+        .stats { font-size: 0.9rem; margin-bottom: 10px; color: #636e72; }
+        .fact-box { margin-top: 15px; font-size: 0.8rem; font-style: italic; color: #555; border-top: 2px dashed #ddd; padding-top: 10px; min-height: 40px; transition: opacity 0.5s; }
+
+        .controls {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            display: flex;
+            gap: 10px;
+        }
+
+        button { background: white; border: none; padding: 15px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.2); transition: transform 0.2s; }
+        button:hover { transform: scale(1.1); }
+
+        /* --- ENTITIES --- */
+        .entity { position: absolute; pointer-events: none; }
+
+        .bee {
+            font-size: 2rem;
+            z-index: 10;
+            transition: left 0.1s linear, top 0.1s linear, transform 0.1s linear;
+        }
+
+        .speech-bubble {
+            position: absolute;
+            background: white;
+            padding: 12px 18px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            color: #333;
+            pointer-events: none;
+            z-index: 20;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+            
+            white-space: normal;
+            word-wrap: break-word;
+            max-width: 180px;
+            line-height: 1.4;
+            text-align: center;
+            
+            opacity: 0;
+            transform: scale(0.8) translateY(10px);
+            transition: opacity 0.3s, transform 0.3s;
+        }
+
+        .speech-bubble.visible {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 5px 5px 0;
+            border-style: solid;
+            border-color: white transparent;
+            display: block;
+            width: 0;
+        }
+
+        /* Animations */
+        @keyframes buttWiggle {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(5deg) scale(1.05); }
+            75% { transform: rotate(-5deg) scale(0.95); }
+        }
+
+        .bee.on-flower {
+            animation: buttWiggle 0.8s ease-in-out infinite;
+            transform-origin: center center;
+        }
+
+        .mushroom, .flower {
+            font-size: 2.5rem;
+            bottom: 0;
+            transform-origin: bottom center;
+            animation: grow 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 5;
+        }
+
+        .particle { position: absolute; pointer-events: none; font-size: 10px; animation: floatAway 2s forwards; opacity: 0.8; }
+        .cloud { position: absolute; background: rgba(255,255,255,0.6); border-radius: 50px; z-index: 0; animation: drift linear infinite; }
+
+        @keyframes grow { from { transform: scale(0); } to { transform: scale(1); } }
+        @keyframes floatAway { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(-50px) rotate(45deg); opacity: 0; } }
+        @keyframes drift { from { transform: translateX(-200px); } to { transform: translateX(110vw); } }
+
+    </style>
+</head>
+<body>
+
+    <div class="modal-overlay" id="intro-modal">
+        <div class="intro-box">
+            <h2>Welcome to your Bee Sanctuary! 🐝</h2>
+            <p>
+                This is a safe space for nature.
+                <br><br>
+                Click on the <strong>sky</strong> to welcome new bees.<br>
+                Click on the <strong>ground</strong> to plant flowers. 
+                <br><br>
+                Sit back and watch them interact. They might even have something sweet to say!
+            </p>
+            <button class="start-btn" onclick="closeModal()">Enter Sanctuary 🌻</button>
+        </div>
+    </div>
+
+    <div class="ui-panel">
+        <h1>The Bee Sanctuary</h1>
+        <div class="stats">Bees: <span id="bee-count">0</span> | Plants: <span id="flower-count">0</span></div>
+        <div class="fact-box" id="nature-fact">"Nature is waiting..."</div>
+    </div>
+
+    <div class="world-container" id="world">
+        <div class="sky-layer" id="sky" onclick="spawnBeeClick(event)"></div>
+        <div class="earth-layer" id="earth" onclick="spawnFlower(event)"></div>
+    </div>
+
+    <div class="controls">
+        <button onclick="clearWorld()" title="Reset Sanctuary">♻️</button>
+    </div>
+
+<script>
+    // --- MODAL CONTROL ---
+    function closeModal() {
+        const modal = document.getElementById('intro-modal');
+        modal.classList.add('modal-hidden');
+        
+        // Auto-spawn one bee and one flower to get them started
+        setTimeout(() => {
+             const w = window.innerWidth;
+             const h = window.innerHeight;
+             spawnBeeClick({ clientX: w * 0.3, clientY: h * 0.3 });
+             spawnFlower({ clientX: w * 0.7, clientY: h * 0.8 });
+        }, 500);
+    }
+
+    // Including Mushrooms in the flower types list so "Plants" covers both
+    const flowerTypes = ['🌻', '🌷', '🪻', '⚘', '🌼', '🌸', '🌹', '🌺', '💐', '🍄'];
+    
+    // --- MASSIVE MESSAGE LISTS ---
+    const sweetMessages = [
+        "You are un-bee-lievable! 💛", "Just buzzing by to say hi!", "You make the world bloom 🌸", "Bee happy today!", 
+        "You're sweeter than honey 🍯", "Sending you good vibes!", "You are the Queen Bee 👑", "Don't worry, bee happy!", 
+        "Your smile is the best nectar", "Hive a great day! 🐝", "You're the bees knees!", "We bee-long together.", 
+        "You're pollen in love!", "Life is better with you.", "You're a keeper!", "Stay bumble and kind.", 
+        "You're my favorite flower.", "Always bee yourself.", "You're creating quite a buzz!", "Thanks for being you.",
+        "You're simply iris-istible!", "I love you a lily bit more every day.", "You rose to the occasion.", "Thistle be a great day.", 
+        "I'm lichen you a lot!", "You're a fungi to be around!", "There's so mushroom in my heart for you.", "You grow girl!", 
+        "You look radishing today.", "Lettuce celebrate you!", "Peas be with you.", "Romaine calm and carry on.",
+        "You're one in a melon.", "You're berry special.", "Olive you so much.", "You're a peach!", "We make a great pear.", 
+        "You're the apple of my eye.", "I find you a-peeling.", "You drive me bananas (in a good way).", "You're sub-lime!",
+        "You're soy awesome.", "You're tea-riffic!", "You're brewtiful.", "I love you a latte.", "Words can't espresso how much you mean to me.",
+        "You're a smart cookie.", "You're one tough cookie.", "You take the cake!", "You're sweet as pie.", "You're my jam.",
+        "You're the zest!", "You're souper!", "You're spec-tacular!", "You're fan-cactus!", "I'm stuck on you!", 
+        "You're looking sharp!", "You prickle my fancy.", "Aloe you vera much.", "You're mint to be.", "You're kind of a big dill.",
+        "You're a cutie pie.", "You're my sunshine.", "You light up my life.", "You make me smile.", "You're wonderful.",
+        "You're amazing.", "You're fantastic.", "You're brilliant.", "You're lovely.", "You're beautiful.",
+        "You're handsome.", "You're charming.", "You're funny.", "You're kind.", "You're generous.",
+        "You're thoughtful.", "You're strong.", "You're brave.", "You're inspiring.", "You're talented.",
+        "You're creative.", "You're unique.", "You're special.", "You're important.", "You matter.",
+        "You are loved.", "I appreciate you.", "I'm proud of you.", "I believe in you.", "I'm here for you.",
+        "You make a difference.", "You bring joy.", "You spread happiness.", "You are a gift.", "You are a treasure.",
+        "Sending you a hug.", "Thinking of you.", "Miss you.", "Can't wait to see you.", "Hope you're having a good day.",
+        "Take care.", "Be safe.", "Relax.", "Breathe.", "Smile.",
+        "Laugh.", "Dream big.", "Follow your heart.", "Never give up.", "Stay positive."
+    ];
+    
+    const natureFacts = [
+        "A bee's wings beat 200 times per second.", "Bees perform a 'waggle dance' to communicate.", 
+        "One bee makes 1/12th tsp of honey in a lifetime.", "Bees see colors 5x faster than humans.", 
+        "The buzzing sound is actually their wings!", "Bees love blue and purple flowers the most.", 
+        "Honey never spoils. Archaeologists found edible honey in ancient Egyptian tombs.", 
+        "Bees have 5 eyes: 2 large compound eyes and 3 smaller ocelli eyes.", 
+        "Only female bees can sting.", "Male bees are called drones and they don't have stingers.", 
+        "The queen bee can live up to 5 years.", "Worker bees live for about 6 weeks in the summer.", 
+        "Bees can recognize human faces.", "Bees have been producing honey for at least 150 million years.", 
+        "A hive of bees will fly 90,000 miles to collect 1 kg of honey.", "Bees are the only insect that produces food eaten by man.", 
+        "Fungi are genetically closer to animals than to plants.", "The largest living organism on Earth is a fungus in Oregon.", 
+        "Mushrooms are the fruit of the fungus.", "Mycelium is the underground network of fungi.", 
+        "Some fungi can glow in the dark (bioluminescence).", "Fungi can break down plastic.", 
+        "There are over 1.5 million species of fungi.", "Yeast is a type of fungus used to make bread and beer.", 
+        "Penicillin is derived from a fungus.", "Trees communicate with each other through a fungal network called the 'Wood Wide Web'.", 
+        "Some fungi are carnivorous and eat worms.", "Fungi can survive in space.", 
+        "The oldest fossil fungus is 1 billion years old.", "Fungi play a crucial role in decomposing organic matter.", 
+        "Lichens are a partnership between a fungus and an alga.", "Truffles are a type of underground mushroom.", 
+        "Some mushrooms can create their own wind to spread spores.", "Fungi are found in every habitat on Earth.", 
+        "The fastest living thing on Earth is a fungus spore launch.", "Bamboo is the fastest growing plant.", 
+        "Sunflowers track the sun across the sky.", "Trees can warn each other of insect attacks.", 
+        "The Amazon rainforest produces 20% of the world's oxygen.", "The ocean produces 50% of the world's oxygen.", 
+        "There are more trees on Earth than stars in the Milky Way.", "A strawberry is not a berry, but a banana is.", 
+        "Apples float because they are 25% air.", "Tomatoes have more genes than humans.", 
+        "Pineapples take 2 years to grow.", "Broccoli is a man-made flower.", 
+        "Potatoes were the first vegetable grown in space.", "Cucumbers are 96% water.", 
+        "Carrots were originally purple.", "Corn is grown on every continent except Antarctica.", 
+        "The world's heaviest pumpkin weighed over 2,600 pounds.", "A single oak tree can produce 10 million acorns in its lifetime.", 
+        "Trees never die of old age.", "The smell of freshly cut grass is a plant distress call.", 
+        "Venus flytraps can count.", "Some plants can hear water.", 
+        "Caffeine evolved as a natural insecticide.", "Vanilla comes from an orchid.", 
+        "Chocolate comes from a fruit tree.", "Coffee beans are actually seeds.", 
+        "Tea is the most consumed beverage in the world after water.", "Cotton is a shrub.", 
+        "Rubber comes from a tree.", "Paper comes from wood.", 
+        "Cork comes from the bark of an oak tree.", "Cinnamon is the inner bark of a tree.", 
+        "Pepper is a dried berry.", "Salt is a mineral, not a plant.", 
+        "Watermelons are berries.", "Pumpkins are fruits.", 
+        "Avocados are fruits.", "Olives are fruits.", 
+        "Peppers are fruits.", "Eggplants are fruits.", 
+        "Peanuts are legumes, not nuts.", "Cashews grow on apples.", 
+        "Almonds are members of the peach family.", "Walnuts are the oldest tree food known to man.", 
+        "Pistachios are related to mangoes.", "Brazil nuts are radioactive.", 
+        "Coconuts can float for months across the ocean.", "Dates are the fruit of a palm tree.", 
+        "Figs are pollinated by wasps.", "Grapes explode in the microwave.", 
+        "Lemons float, but limes sink.", "Oranges were originally green.", 
+        "Peaches are fuzzy to protect against insects.", "Pears ripen from the inside out.", 
+        "Plums are related to roses.", "Raspberries have hair.", 
+        "Strawberries are the only fruit with seeds on the outside."
+    ];
+
+    let beeCount = 0;
+    let flowerCount = 0;
+    let bees = [];
+    let flowers = [];
+
+    function init() {
+        createClouds();
+        cycleFacts();
+        setInterval(cycleFacts, 8000);
+        setInterval(triggerRandomMessage, 10000); // Trigger message every 10s
+        requestAnimationFrame(gameLoop);
+    }
+
+    // --- Bee Class ---
+    class Bee {
+        constructor(x, y) {
+            this.element = document.createElement('div');
+            this.element.classList.add('entity', 'bee');
+            this.element.innerText = '🐝';
+            document.getElementById('world').appendChild(this.element);
+
+            // Speech Bubble Element
+            this.bubble = document.createElement('div');
+            this.bubble.classList.add('speech-bubble');
+            document.getElementById('world').appendChild(this.bubble);
+
+            this.pos = { x, y };
+            this.vel = { x: (Math.random() - 0.5) * 5, y: (Math.random() - 0.5) * 2 };
+            this.state = 'FLYING'; // FLYING, APPROACHING, LANDING, ON_FLOWER, TALKING
+            this.targetFlower = null;
+            this.timer = 0; 
+            this.noiseOffset = Math.random() * 1000;
+        }
+
+        speak(text) {
+            // Cancel current action to talk
+            if(this.state === 'TALKING') return;
+            
+            // Release flower if on one
+            if(this.targetFlower) {
+                this.targetFlower.isOccupied = false;
+                this.targetFlower = null;
+            }
+            this.element.classList.remove('on-flower');
+
+            this.state = 'TALKING';
+            this.bubble.innerText = text;
+            this.bubble.classList.add('visible');
+            this.timer = 0;
+        }
+
+        update() {
+            switch (this.state) {
+                case 'FLYING':
+                    this.flyBehavior();
+                    break;
+                case 'APPROACHING':
+                    this.approachBehavior();
+                    break;
+                case 'LANDING':
+                    this.landingBehavior();
+                    break;
+                case 'ON_FLOWER':
+                    this.onFlowerBehavior();
+                    break;
+                case 'TALKING':
+                    this.talkingBehavior();
+                    break;
+            }
+            this.applyPhysics();
+            this.updateVisuals();
+        }
+
+        talkingBehavior() {
+            this.timer++;
+            // Hover in place gently
+            this.vel.x *= 0.9;
+            this.vel.y *= 0.9;
+            this.pos.y += Math.sin(this.timer * 0.1) * 0.5; // Bobbing
+
+            if(this.timer > 250) { // Talk for ~4 seconds
+                this.state = 'FLYING';
+                this.bubble.classList.remove('visible');
+                // Zoom away happily
+                this.vel.y = -3;
+                createParticles(this.pos.x, this.pos.y, '💖');
+            }
+        }
+
+        flyBehavior() {
+            this.noiseOffset += 0.01;
+            const noiseX = Math.sin(this.noiseOffset) + Math.sin(this.noiseOffset * 0.5) * 0.5;
+            const noiseY = Math.cos(this.noiseOffset * 0.7) + Math.cos(this.noiseOffset * 0.3) * 0.5;
+            
+            this.vel.x += noiseX * 0.2;
+            this.vel.y += noiseY * 0.1;
+
+            // Stay roughly on screen
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight * 0.4;
+            this.vel.x += (centerX - this.pos.x) * 0.0005;
+            this.vel.y += (centerY - this.pos.y) * 0.0005;
+
+            // Cap Speed
+            const maxSpeed = 3;
+            const speed = Math.sqrt(this.vel.x * this.vel.x + this.vel.y * this.vel.y);
+            if (speed > maxSpeed) {
+                this.vel.x = (this.vel.x / speed) * maxSpeed;
+                this.vel.y = (this.vel.y / speed) * maxSpeed;
+            }
+
+            // Find flower chance
+            if (flowers.length > 0 && Math.random() > 0.98) {
+                this.targetFlower = this.findNearestAvailableFlower();
+                if (this.targetFlower) {
+                    this.state = 'APPROACHING';
+                    this.targetFlower.isOccupied = true;
+                }
+            }
+        }
+
+        approachBehavior() {
+            if (!this.targetFlower || !document.contains(this.targetFlower.element)) {
+                this.state = 'FLYING';
+                return;
+            }
+            const dx = this.targetFlower.pos.x - this.pos.x;
+            const dy = this.targetFlower.pos.y - 20 - this.pos.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            this.vel.x += (dx / dist) * 0.3;
+            this.vel.y += (dy / dist) * 0.3;
+
+            // Dampen speed near target
+            this.vel.x *= 0.95;
+            this.vel.y *= 0.95;
+
+            if (dist < 10) {
+                this.state = 'LANDING';
+                this.timer = 0;
+                this.vel = { x: 0, y: 0 };
+            }
+        }
+
+        landingBehavior() {
+            this.timer++;
+            this.pos.x += (Math.random() - 0.5) * 1;
+            this.pos.y += (Math.sin(this.timer * 0.5) * 0.5);
+
+            if (this.timer > 30) {
+                this.state = 'ON_FLOWER';
+                this.timer = 0;
+                this.element.classList.add('on-flower');
+                this.pos.x = this.targetFlower.pos.x;
+                this.pos.y = this.targetFlower.pos.y - 20;
+            }
+        }
+
+        onFlowerBehavior() {
+            this.timer++;
+            if (this.timer > 120 + Math.random() * 180) {
+                this.state = 'FLYING';
+                this.element.classList.remove('on-flower');
+                this.targetFlower.isOccupied = false;
+                this.targetFlower = null;
+                this.vel.y = -4; 
+                createParticles(this.pos.x, this.pos.y, '✨');
+            }
+        }
+
+        applyPhysics() {
+            this.pos.x += this.vel.x;
+            this.pos.y += this.vel.y;
+
+            if (this.state === 'FLYING') {
+                 const width = window.innerWidth;
+                 const height = window.innerHeight;
+                 const padding = 30;
+                 if (this.pos.x < padding) this.vel.x += 0.2;
+                 if (this.pos.x > width - padding) this.vel.x -= 0.2;
+                 if (this.pos.y < padding) this.vel.y += 0.2;
+                 if (this.pos.y > height * 0.7) this.vel.y -= 0.3; 
+            }
+        }
+
+        updateVisuals() {
+            this.element.style.left = this.pos.x + 'px';
+            this.element.style.top = this.pos.y + 'px';
+
+            // Bubble follows bee
+            this.bubble.style.left = (this.pos.x - 75) + 'px'; // Center bubble based on 150px avg width
+            this.bubble.style.top = (this.pos.y - 60) + 'px'; // Move higher up
+
+            if (this.state !== 'ON_FLOWER' && this.state !== 'LANDING' && this.state !== 'TALKING') {
+                const angle = Math.atan2(this.vel.y, this.vel.x) * (180 / Math.PI);
+                this.element.style.transform = `rotate(${angle}deg) scaleX(${this.vel.x > 0 ? -1 : 1})`;
+            } else if (this.state === 'ON_FLOWER') {
+                 this.element.style.transform = `rotate(0deg) scaleX(${this.vel.x > 0 ? -1 : 1})`;
+            } else if (this.state === 'TALKING') {
+                // Face user (flat rotation)
+                this.element.style.transform = `rotate(0deg) scaleX(1) scale(1.2)`; 
+            }
+        }
+
+        findNearestAvailableFlower() {
+            let nearest = null;
+            let minDidst = Infinity;
+            for (const flower of flowers) {
+                if (flower.isOccupied) continue;
+                const dx = flower.pos.x - this.pos.x;
+                const dy = flower.pos.y - this.pos.y;
+                const dist = dx * dx + dy * dy;
+                if (dist < minDidst) {
+                    minDidst = dist;
+                    nearest = flower;
+                }
+            }
+            return nearest;
+        }
+
+        remove() {
+            this.element.remove();
+            this.bubble.remove();
+        }
+    }
+
+    class Flower {
+        constructor(x, y) {
+            const earth = document.getElementById('earth');
+            const rect = earth.getBoundingClientRect();
+            this.element = document.createElement('div');
+            this.element.classList.add('entity', 'flower');
+            this.element.innerText = flowerTypes[Math.floor(Math.random() * flowerTypes.length)];
+            this.pos = { x: x - 20, y: y - 20};
+            this.element.style.left = (x - 25) + 'px'; 
+            this.element.style.bottom = (rect.bottom - y - 10) + 'px';
+            earth.appendChild(this.element);
+            this.isOccupied = false;
+        }
+        remove() { this.element.remove(); }
+    }
+
+    // --- LOGIC ---
+    function triggerRandomMessage() {
+        if(bees.length === 0) return;
+        const luckyBee = bees[Math.floor(Math.random() * bees.length)];
+        const msg = sweetMessages[Math.floor(Math.random() * sweetMessages.length)];
+        luckyBee.speak(msg);
+    }
+
+    function spawnBeeClick(e) {
+        bees.push(new Bee(e.clientX, e.clientY));
+        beeCount++;
+        updateStats();
+        createParticles(e.clientX, e.clientY, '✨');
+    }
+
+    function spawnFlower(e) {
+        flowers.push(new Flower(e.clientX, e.clientY));
+        flowerCount++;
+        updateStats();
+        createParticles(e.clientX, e.clientY, '🌸');
+    }
+
+    function clearWorld() {
+        bees.forEach(b => b.remove());
+        flowers.forEach(f => f.remove());
+        bees = []; flowers = [];
+        beeCount = 0; flowerCount = 0;
+        updateStats();
+    }
+
+    function gameLoop() {
+        bees.forEach(bee => bee.update());
+        requestAnimationFrame(gameLoop);
+    }
+
+    function updateStats() {
+        document.getElementById('bee-count').innerText = beeCount;
+        document.getElementById('flower-count').innerText = flowerCount;
+    }
+    
+    function cycleFacts() {
+        const box = document.getElementById('nature-fact');
+        box.style.opacity = 0;
+        setTimeout(() => {
+            box.innerText = natureFacts[Math.floor(Math.random() * natureFacts.length)];
+            box.style.opacity = 1;
+        }, 500);
+    }
+    
+    function createClouds() {
+        const sky = document.getElementById('sky');
+        for(let i=0; i<3; i++) {
+            const cloud = document.createElement('div');
+            cloud.classList.add('cloud');
+            cloud.style.width = (Math.random() * 100 + 100) + 'px';
+            cloud.style.height = (Math.random() * 40 + 30) + 'px';
+            cloud.style.top = (Math.random() * 30) + '%';
+            cloud.style.left = (Math.random() * 100) + 'vw';
+            cloud.style.animationDuration = (Math.random() * 20 + 30) + 's';
+            sky.appendChild(cloud);
+        }
+    }
+    
+    function createParticles(x, y, char) {
+        for(let i=0; i<5; i++) {
+            const p = document.createElement('div');
+            p.innerText = char;
+            p.classList.add('particle');
+            p.style.left = x + 'px';
+            p.style.top = y + 'px';
+            p.style.setProperty('--x', (Math.random()-0.5)*50 + 'px');
+            document.body.appendChild(p);
+            setTimeout(() => p.remove(), 2000);
+        }
+    }
+
+    init();
+</script>
+</body>
+</html>
