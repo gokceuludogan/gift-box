@@ -467,50 +467,6 @@
         .gift-desc { font-size: 0.95rem; color: var(--muted); }
         .arrow { font-size: 1.5rem; color: var(--accent); font-weight: bold; }
 
-        /* --- HASHTAGS --- */
-        .tags { margin-top: 30px; }
-
-        .tags p { margin: 0 0 10px; color: var(--muted); }
-
-        .tag-list {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .tag {
-            min-height: 40px;
-            padding: 6px 12px;
-            border: 0;
-            border-radius: 12px;
-            background: var(--card-bg);
-            color: var(--accent-strong);
-            font-weight: 500;
-            font-size: 0.95rem;
-        }
-
-        .tag:active { transform: scale(0.95); }
-
-        .toast {
-            position: fixed;
-            left: 50%;
-            bottom: calc(22px + env(safe-area-inset-bottom, 0px));
-            transform: translate(-50%, 20px);
-            padding: 10px 18px;
-            border-radius: 999px;
-            background: var(--text);
-            color: var(--bg-color);
-            font-weight: 500;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.25s, transform 0.25s;
-            z-index: 10000;
-            max-width: 90vw;
-        }
-
-        .toast.on { opacity: 1; transform: translate(-50%, 0); }
-
         .footer {
             margin-top: 34px;
             font-size: 0.9rem;
@@ -566,7 +522,7 @@
         <header class="card header-card">
             <p class="depot-tag">Depot of Affection, acil şube</p>
             <h1>Suçluluk Mahkemesi</h1>
-            <p class="docket">Dosya no: 2026/ÜŞENDİM</p>
+            <p class="docket">Dosya no: 2026</p>
 
             <p class="subtitle">
                 <span id="greeting">Sayın sanık</span>, “bugün hiçbir şey yapmadım” diyerek kendini suçladığın ihbarı aldık.
@@ -657,19 +613,11 @@
             </a> --->
         </div>
 
-        <div class="tags">
-            <p>Günün etiketleri. Dokun, kopyala.</p>
-            <div class="tag-list" id="tag-list"></div>
-        </div>
-
         <div class="footer">
-            © 2026 Gökçe’nin Tuhaf Fikirleri A.Ş. <br>
-            <i>(Kararın altındaki imzaya dokun, sürpriz var)</i>
+            © 2026 Gökçe’nin Tuhaf Fikirleri A.Ş.
         </div>
 
     </div>
-
-    <div class="toast" id="toast" role="status"></div>
 
 <script>
     // =====================================================
@@ -712,6 +660,8 @@
     ];
 
     const SILENCER_LINES = [
+        'Hiçbir şey yapmamanın da gevrek bi tadı var. Çıkar tadını.',   // ilk dokunuşta hep bu çıkar
+        'Seninle konuşmanın gevrek bi tadı var. Kâtip bunu tutanağa geçirdi.',
         'Canın sağ olsun. Gerisi yarının işi.',
         'Telefon bile şarja takılıyor. Sen niye takılmayasın?',
         'Yapılacaklar listesi bir yere kaçmıyor. Maalesef.',
@@ -724,17 +674,6 @@
         'Bugünün tek görevi geçmekti. Geçti. Tebrikler.',
         'Yatana kolay gelsin diye bir şey var mı? Artık var. Kolay gelsin.',
         'Kendine bir çay koy. Bu bir mahkeme emridir.'
-    ];
-
-    const HASHTAGS = [
-        '#BugünDeHiçbirŞeyYapmadım',
-        '#ENapim',
-        '#HâkimBeyBenMasumum',
-        '#DinlenmekDeBirİş',
-        '#CanınSağOlsun',
-        '#PazartesiBaşlıyorum',
-        '#ÇayKoy',
-        '#NazarDeğmesin'
     ];
 
     // =====================================================
@@ -881,43 +820,19 @@
 
         $('ruling').textContent = basis + bonus +
             ' Dinlenmek suç değildir. Sanığın beraatine, suçluluk duygusunun süresiz uzaklaştırılmasına' +
-            ' ve sanığın kendine derhal bir çay koymasına karar verilmiştir. Karar kesindir, itiraz yolu kapalıdır.';
+            ' ve sanığın kendine derhal bir çay koymasına karar verilmiştir. Mahkeme ayrıca beraatin gevrek bi tadı olduğunu' +
+            ' tutanağa geçirmiştir. Karar kesindir, itiraz yolu kapalıdır.';
     }
 
     // --- CONSCIENCE SILENCER ---
     let lastLine = -1;
     $('silence-btn').addEventListener('click', (e) => {
         let i;
-        do { i = Math.floor(Math.random() * SILENCER_LINES.length); } while (i === lastLine);
+        if (lastLine === -1) i = 0;
+        else do { i = Math.floor(Math.random() * SILENCER_LINES.length); } while (i === lastLine);
         lastLine = i;
         $('silencer-line').textContent = SILENCER_LINES[i];
         burst(e.currentTarget, ['💖', '🤫', '☕', '🐾'], 8);
-    });
-
-    // --- HASHTAGS ---
-    let toastTimer;
-    function toast(msg) {
-        const t = $('toast');
-        t.textContent = msg;
-        t.classList.add('on');
-        clearTimeout(toastTimer);
-        toastTimer = setTimeout(() => t.classList.remove('on'), 1800);
-    }
-
-    HASHTAGS.forEach((tag) => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'tag';
-        btn.textContent = tag;
-        btn.addEventListener('click', async () => {
-            try {
-                await navigator.clipboard.writeText(tag);
-                toast('Kopyalandı: ' + tag);
-            } catch (err) {
-                toast('Kopyalanamadı. Etikete basılı tutup seç.');
-            }
-        });
-        $('tag-list').appendChild(btn);
     });
 
     createHearts();
