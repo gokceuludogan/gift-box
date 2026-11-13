@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>⚖️ Suçluluk Mahkemesi | Depot of Affection</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #ffe6ea;
+            --card-bg: #ffffff;
+            --soft-bg: #fff0f3;
+            --accent: #ff4757;
+            --accent-strong: #d42a3f;
+            --on-accent: #ffffff;
+            --text: #2f3542;
+            --muted: #57606f;
+            --faint: #8b95a3;
+            --note-bg: #ffeaa7;
+            --note-text: #b3261e;
+            --paper: #fffaf0;
+            --paper-line: #e8d9b8;
+            --stamp: #c81e36;
+            --shadow: rgba(255, 71, 87, 0.2);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                color-scheme: dark;
+                --bg-color: #26121c;
+                --card-bg: #3a1c2b;
+                --soft-bg: #4a2436;
+                --accent: #ff6b7a;
+                --accent-strong: #ff8c98;
+                --on-accent: #26121c;
+                --text: #ffe9ee;
+                --muted: #e3bcc7;
+                --faint: #b58a98;
+                --note-bg: #f6d77a;
+                --note-text: #7a1420;
+                --paper: #33202a;
+                --paper-line: #6b4556;
+                --stamp: #ff7d8b;
+                --shadow: rgba(0, 0, 0, 0.35);
+            }
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 0px);
+            min-height: 100vh;
+            font-family: 'Fredoka', 'Trebuchet MS', 'Segoe UI', sans-serif;
+            font-size: 1.05rem;
+            line-height: 1.55;
+            background-color: var(--bg-color);
+            color: var(--text);
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        button {
+            font: inherit;
+            color: inherit;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+
+        :focus-visible {
+            outline: 3px solid var(--accent-strong);
+            outline-offset: 3px;
+        }
+
+        /* --- FLOATING HEARTS BACKGROUND --- */
+        .heart-bg {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .heart {
+            position: absolute;
+            bottom: -100px;
+            font-size: 2rem;
+            opacity: 0.4;
+            animation: floatUp 10s linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0.45; }
+            100% { transform: translateY(-115vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* --- MAIN CONTAINER --- */
+        .container {
+            position: relative;
+            z-index: 10;
+            max-width: 560px;
+            width: 92%;
+            margin: 28px 0 40px;
+            text-align: center;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 28px;
+            padding: 28px 20px;
+            box-shadow: 0 10px 25px var(--shadow);
+            margin-bottom: 22px;
+        }
+
+        .header-card {
+            border: 4px solid var(--accent);
+            padding-top: 34px;
+            animation: popIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .depot-tag {
+            display: inline-block;
+            margin: 0 0 10px;
+            padding: 4px 14px;
+            border-radius: 999px;
+            background: var(--soft-bg);
+            color: var(--accent-strong);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        h1 {
+            color: var(--accent-strong);
+            font-size: clamp(2rem, 9vw, 2.9rem);
+            font-weight: 700;
+            margin: 0 0 6px;
+            line-height: 1.08;
+            letter-spacing: -0.5px;
+        }
+
+        .docket {
+            margin: 0 0 16px;
+            font-weight: 600;
+            color: var(--faint);
+        }
+
+        h2 {
+            margin: 0 0 6px;
+            font-size: 1.45rem;
+            font-weight: 600;
+            line-height: 1.2;
+            color: var(--text);
+        }
+
+        .step-no {
+            display: inline-grid;
+            place-items: center;
+            width: 1.9rem;
+            height: 1.9rem;
+            margin-right: 6px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: var(--on-accent);
+            font-size: 1.05rem;
+            font-weight: 700;
+            vertical-align: 2px;
+        }
+
+        .subtitle {
+            margin: 0 auto;
+            max-width: 34em;
+            color: var(--muted);
+        }
+
+        .cat-frame {
+            margin: 20px auto 8px;
+            width: min(230px, 64vw);
+            aspect-ratio: 1;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 3px dashed var(--accent);
+            background: var(--soft-bg);
+            display: grid;
+            place-items: center;
+            font-size: 4.5rem;
+        }
+
+        .cat-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .cat-caption {
+            margin: 0;
+            font-size: 0.92rem;
+            color: var(--faint);
+        }
+
+        /* --- STEP 1: EVIDENCE --- */
+        .chips {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin: 18px 0 20px;
+            padding: 0;
+            list-style: none;
+        }
+
+        .chip {
+            min-height: 48px;
+            padding: 10px 16px;
+            border-radius: 999px;
+            border: 2px solid var(--accent);
+            background: transparent;
+            font-weight: 500;
+            line-height: 1.25;
+            transition: transform 0.15s, background-color 0.15s, color 0.15s;
+        }
+
+        .chip:active { transform: scale(0.94); }
+
+        .chip[aria-pressed="true"] {
+            background: var(--accent);
+            color: var(--on-accent);
+            transform: rotate(-1.5deg);
+        }
+
+        .chip[aria-pressed="true"]::after { content: ' ✓'; font-weight: 700; }
+
+        .meter-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .meter-pct {
+            font-size: 1.3rem;
+            color: var(--accent-strong);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .meter-track {
+            height: 18px;
+            border-radius: 999px;
+            background: var(--soft-bg);
+            overflow: hidden;
+        }
+
+        .meter-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #ff9a8b, #ff4757);
+            transition: width 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .judge-says {
+            min-height: 3.2em;
+            margin: 12px 0 0;
+            color: var(--muted);
+        }
+
+        /* --- STEP 2: PLEA --- */
+        .plea-buttons {
+            display: grid;
+            gap: 12px;
+            margin-top: 18px;
+        }
+
+        .btn {
+            min-height: 56px;
+            padding: 12px 18px;
+            border-radius: 18px;
+            border: 2px solid var(--accent);
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: var(--on-accent);
+            box-shadow: 0 6px 0 var(--accent-strong);
+        }
+
+        .btn-primary:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--accent-strong); }
+
+        .btn-ghost { background: transparent; }
+
+        .btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.55;
+            border-style: dashed;
+        }
+
+        .plea-msg {
+            min-height: 1.6em;
+            margin: 14px 0 0;
+            font-weight: 600;
+            color: var(--accent-strong);
+        }
+
+        .shake { animation: shake 0.4s; }
+
+        @keyframes shake {
+            20% { translate: -7px 0; }
+            40% { translate: 7px 0; }
+            60% { translate: -5px 0; }
+            80% { translate: 5px 0; }
+        }
+
+        /* --- STEP 3: VERDICT --- */
+        .verdict[hidden] { display: none; }
+
+        .verdict {
+            position: relative;
+            background: var(--paper);
+            border: 2px dashed var(--paper-line);
+            text-align: left;
+            padding: 26px 22px 24px;
+            scroll-margin-top: 16px;
+        }
+
+        .verdict h2 { text-align: center; }
+
+        .court-name {
+            margin: 0 0 14px;
+            text-align: center;
+            color: var(--faint);
+            font-weight: 500;
+        }
+
+        .stamp {
+            display: block;
+            width: fit-content;
+            margin: 6px auto 18px;
+            padding: 6px 22px 4px;
+            border: 5px double var(--stamp);
+            border-radius: 12px;
+            color: var(--stamp);
+            font-size: clamp(2.6rem, 14vw, 3.8rem);
+            font-weight: 700;
+            letter-spacing: 4px;
+            line-height: 1.1;
+            transform: rotate(-7deg);
+            cursor: pointer;
+            user-select: none;
+            background: transparent;
+        }
+
+        .verdict.show .stamp { animation: stampIn 0.55s cubic-bezier(0.2, 1.4, 0.4, 1) both; }
+
+        @keyframes stampIn {
+            0% { transform: rotate(-22deg) scale(3.2); opacity: 0; }
+            60% { transform: rotate(-5deg) scale(0.92); opacity: 1; }
+            100% { transform: rotate(-7deg) scale(1); opacity: 1; }
+        }
+
+        .facts {
+            margin: 0 0 14px;
+            padding: 0;
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 4px 12px;
+        }
+
+        .facts dt { color: var(--faint); }
+        .facts dd { margin: 0; font-weight: 500; }
+
+        .ruling { margin: 0 0 18px; }
+
+        .love-note {
+            display: block;
+            width: fit-content;
+            margin: 0 auto 4px;
+            font-weight: 600;
+            color: var(--note-text);
+            background: var(--note-bg);
+            padding: 8px 16px;
+            border-radius: 15px;
+            transform: rotate(-2deg);
+            text-align: center;
+        }
+
+        /* --- GÖKÇE SIGNATURE STYLE --- */
+        .vip-signature {
+            background: linear-gradient(45deg, #e8554e, #e23a6a, #c2478f, #7d5bc4, #e8554e);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            display: inline-block;
+            cursor: pointer;
+            animation: shine 3s linear infinite;
+            transition: transform 0.2s;
+            position: relative;
+            font-size: 1.5rem;
+            user-select: none;
+            border: 0;
+            padding: 0 4px;
+        }
+
+        .vip-signature:hover { transform: scale(1.1) rotate(-2deg); }
+
+        .vip-signature::after {
+            content: '✨';
+            font-size: 1.2rem;
+            position: absolute;
+            top: -15px;
+            right: -12px;
+            -webkit-text-fill-color: initial;
+        }
+
+        @keyframes shine {
+            to { background-position: 200% center; }
+        }
+
+        /* --- CONSCIENCE SILENCER --- */
+        .silencer {
+            margin-top: 22px;
+            padding-top: 20px;
+            border-top: 2px dashed var(--paper-line);
+            text-align: center;
+        }
+
+        .silencer-line {
+            min-height: 3.2em;
+            margin: 14px 0 0;
+            font-size: 1.15rem;
+            font-weight: 500;
+        }
+
+        /* --- GIFT MENU --- */
+        .gift-menu { display: grid; gap: 16px; }
+
+        .gift-item {
+            background: var(--card-bg);
+            padding: 18px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            text-decoration: none;
+            color: var(--text);
+            box-shadow: 0 5px 15px var(--shadow);
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .gift-item:hover, .gift-item:active {
+            transform: translateY(-4px) scale(1.02);
+            border-color: var(--accent);
+        }
+
+        .gift-icon { font-size: 2.3rem; margin-right: 14px; }
+        .gift-info { text-align: left; flex-grow: 1; }
+        .gift-title { font-weight: 600; font-size: 1.2rem; display: block; }
+        .gift-desc { font-size: 0.95rem; color: var(--muted); }
+        .arrow { font-size: 1.5rem; color: var(--accent); font-weight: bold; }
+
+        /* --- HASHTAGS --- */
+        .tags { margin-top: 30px; }
+
+        .tags p { margin: 0 0 10px; color: var(--muted); }
+
+        .tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .tag {
+            min-height: 40px;
+            padding: 6px 12px;
+            border: 0;
+            border-radius: 12px;
+            background: var(--card-bg);
+            color: var(--accent-strong);
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .tag:active { transform: scale(0.95); }
+
+        .toast {
+            position: fixed;
+            left: 50%;
+            bottom: calc(22px + env(safe-area-inset-bottom, 0px));
+            transform: translate(-50%, 20px);
+            padding: 10px 18px;
+            border-radius: 999px;
+            background: var(--text);
+            color: var(--bg-color);
+            font-weight: 500;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s, transform 0.25s;
+            z-index: 10000;
+            max-width: 90vw;
+        }
+
+        .toast.on { opacity: 1; transform: translate(-50%, 0); }
+
+        .footer {
+            margin-top: 34px;
+            font-size: 0.9rem;
+            color: var(--faint);
+            padding-bottom: 20px;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* --- EMOJI EXPLOSION --- */
+        .sparkle {
+            position: fixed;
+            pointer-events: none;
+            animation: explode 1.5s ease-out forwards;
+            font-size: clamp(2rem, 9vw, 3.5rem);
+            z-index: 9999;
+            transform-origin: center center;
+        }
+
+        @keyframes explode {
+            0% {
+                transform: translate(-50%, -50%) translate(0, 0) scale(0.5) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) translate(var(--destX), var(--destY)) scale(1.2) rotate(180deg);
+                opacity: 0;
+            }
+        }
+
+        @media (min-width: 480px) {
+            .card { padding: 34px 30px; }
+            .plea-buttons { grid-template-columns: 1fr 1fr; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .heart, .sparkle { display: none; }
+            .header-card, .vip-signature, .shake, .verdict.show .stamp { animation: none; }
+            .meter-fill, .btn, .chip { transition: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="heart-bg" id="heart-container" aria-hidden="true"></div>
+
+    <div class="container">
+
+        <!-- CELPNAME -->
+        <header class="card header-card">
+            <p class="depot-tag">Depot of Affection, acil şube</p>
+            <h1>Suçluluk Mahkemesi</h1>
+            <p class="docket">Dosya no: 2026/ÜŞENDİM</p>
+
+            <p class="subtitle">
+                <span id="greeting">Sayın sanık</span>, “bugün hiçbir şey yapmadım” diyerek kendini suçladığın ihbarı aldık.
+                Dava açıldı. Dosyan Hâkim Kedi’nin önünde.
+            </p>
+
+            <div class="cat-frame">
+                <img src="https://cataas.com/cat/gif?t=1" alt="Hâkim Kedi" onerror="this.replaceWith('🐱')">
+            </div>
+            <p class="cat-caption">Hâkim Kedi. Görev başında, muhtemelen uyuyor.</p>
+        </header>
+
+        <!-- 1: DELİLLER -->
+        <section class="card" aria-labelledby="evidence-title">
+            <h2 id="evidence-title"><span class="step-no">1</span>Delilleri topla</h2>
+            <p class="subtitle">Bugün aslında neler yaptın? Yaptıklarına dokun.</p>
+
+            <ul class="chips" id="chips"></ul>
+
+            <div class="meter-head">
+                <span>Verimlilik-o-metre</span>
+                <span class="meter-pct" id="meter-pct">%0</span>
+            </div>
+            <div class="meter-track"><div class="meter-fill" id="meter-fill"></div></div>
+            <p class="judge-says" id="judge-says" aria-live="polite">Henüz delil yok. Hâkim Kedi bekliyor, bir gözü kapalı.</p>
+        </section>
+
+        <!-- 2: SAVUNMA -->
+        <section class="card" aria-labelledby="plea-title">
+            <h2 id="plea-title"><span class="step-no">2</span>Savunmanı yap</h2>
+            <p class="subtitle">Sanığın son sözü nedir?</p>
+
+            <div class="plea-buttons">
+                <button class="btn btn-ghost" id="guilty-btn" type="button">Suçluyum 😔</button>
+                <button class="btn btn-primary" id="innocent-btn" type="button">E napim, masumum 😌</button>
+            </div>
+            <p class="plea-msg" id="plea-msg" aria-live="polite"></p>
+        </section>
+
+        <!-- 3: KARAR -->
+        <section class="card verdict" id="verdict" aria-labelledby="verdict-title" hidden>
+            <h2 id="verdict-title"><span class="step-no">3</span>Karar</h2>
+            <p class="court-name">Şefkat Deposu Adliyesi</p>
+
+            <button class="stamp" id="stamp" type="button" aria-label="Beraat. Kutlamak için dokun.">BERAAT</button>
+
+            <dl class="facts">
+                <dt>Sanık</dt><dd id="fact-name">Sayın sanık</dd>
+                <dt>Suçlama</dt><dd>Bugün hiçbir şey yapmamak</dd>
+                <dt>Deliller</dt><dd id="fact-evidence"></dd>
+                <dt>Tarih</dt><dd id="fact-date"></dd>
+            </dl>
+
+            <p class="ruling" id="ruling"></p>
+
+            <div class="love-note">
+                Hâkim Kedi adına, kâtip<br>
+                <button class="vip-signature" id="signature" type="button">Gökçe</button>
+            </div>
+
+            <div class="silencer">
+                <p class="subtitle">Karar çıktı ama vicdanın hâlâ konuşuyor mu?</p>
+                <div class="plea-buttons" style="grid-template-columns: 1fr;">
+                    <button class="btn btn-primary" id="silence-btn" type="button">Vicdanımı sustur 🤫</button>
+                </div>
+                <p class="silencer-line" id="silencer-line" aria-live="polite"></p>
+            </div>
+        </section>
+
+        <div class="gift-menu">
+            <!-- --- GIFT ITEMS
+            <a href="dolphin-tracker.html" class="gift-item">
+                <div class="gift-icon">🐬</div>
+                <div class="gift-info">
+                    <span class="gift-title">Project: UNSTOPPABLE</span>
+                    <span class="gift-desc">For the package that never arrived.</span>
+                </div>
+                <div class="arrow">→</div>
+            </a>
+
+            <a href="card-collection.html" class="gift-item">
+                <div class="gift-icon">🃏</div>
+                <div class="gift-info">
+                    <span class="gift-title">Fate Deck 2026</span>
+                    <span class="gift-desc">Draw a card, predict your future.</span>
+                </div>
+                <div class="arrow">→</div>
+            </a> --->
+        </div>
+
+        <div class="tags">
+            <p>Günün etiketleri. Dokun, kopyala.</p>
+            <div class="tag-list" id="tag-list"></div>
+        </div>
+
+        <div class="footer">
+            © 2026 Gökçe’nin Tuhaf Fikirleri A.Ş. <br>
+            <i>(Kararın altındaki imzaya dokun, sürpriz var)</i>
+        </div>
+
+    </div>
+
+    <div class="toast" id="toast" role="status"></div>
+
+<script>
+    // =====================================================
+    //  AYARLAR: burayı değiştirmen yeterli
+    // =====================================================
+    const SANIK_ADI = "";   // Onun adını yaz, örn. "Elif". Boş kalırsa “Sayın sanık” yazar.
+
+    const EVIDENCE = [
+        ['🫁', 'Nefes aldım'],
+        ['☕', 'Çay ya da kahve içtim'],
+        ['📱', 'Telefona baktım (çok)'],
+        ['🛏️', 'Yataktan kalktım, geri yattım'],
+        ['🍳', 'Yumurta yedim', 'Yumurta! Protein alınmış. Hâkim Kedi “sporcu bu” diye not düştü.'],
+        ['💧', 'Su içtim', 'Su içmek mi? Bu resmen kişisel bakım. Mahkeme etkilendi.'],
+        ['👀', 'Tavana bakıp hayatı sorguladım'],
+        ['📺', '“Bir bölüm daha” dedim'],
+        ['🌻', 'Çekirdek çitledim'],
+        ['🐈', 'Bir kediye selam verdim'],
+        ['💬', 'Birini gülümsettim'],
+        ['💭', 'Gökçe’yi düşündüm', 'Bu delil dosyanın en üstüne kondu. Kâtip kızardı, Hâkim Kedi görmezden geldi.'],
+        ['✨', 'Var oldum']
+    ];
+
+    const JUDGE_LINES = [
+        [0, 'Henüz delil yok. Hâkim Kedi bekliyor, bir gözü kapalı.'],
+        [1, 'İlk delil geldi. Hâkim Kedi tek kulağını oynattı.'],
+        [2, 'E bu bayağı yoğun bir günmüş.'],
+        [4, 'Dur dur. Sen buna mı “hiçbir şey” diyorsun?'],
+        [6, 'Yok artık. Bu tempoyla tükenmişlik sendromu yaşarsın.'],
+        [8, 'Verimlilik-o-metre patladı. Maşallah, tü tü tü, nazar değmesin 🧿'],
+        [13, 'Hepsini yapmışsın. Hâkim Kedi yoruldu, sen nasıl yorulmadın?']
+    ];
+
+    const REJECTIONS = [
+        'İtiraz reddedildi. Tekrar dene.',
+        'Sistem yok. Suçluluk kaydedilemedi.',
+        'Bugün git, yarın gel.',
+        'Hâkim Kedi duymadı, mırlıyordu.',
+        'Bu buton çay molasına çıktı. Diğerine bas.'
+    ];
+
+    const SILENCER_LINES = [
+        'Canın sağ olsun. Gerisi yarının işi.',
+        'Telefon bile şarja takılıyor. Sen niye takılmayasın?',
+        'Yapılacaklar listesi bir yere kaçmıyor. Maalesef.',
+        'Annenin “bütün gün yattın” demesi delil sayılmıyor. Mahkeme reddetti.',
+        'Bugün hiçbir şey yapmadın ama birinin aklından da hiç çıkmadın. O da bir şey.',
+        'Dinlenmek de bir iş. Sen bugün mesaiye kaldın.',
+        '“Elalemin kızı” da her gün üretken değilmiş. Soruşturduk.',
+        'Pazartesi başlarsın. Gelenek böyle.',
+        'Ellerine sağlık, çok güzel dinlenmişsin.',
+        'Bugünün tek görevi geçmekti. Geçti. Tebrikler.',
+        'Yatana kolay gelsin diye bir şey var mı? Artık var. Kolay gelsin.',
+        'Kendine bir çay koy. Bu bir mahkeme emridir.'
+    ];
+
+    const HASHTAGS = [
+        '#BugünDeHiçbirŞeyYapmadım',
+        '#ENapim',
+        '#HâkimBeyBenMasumum',
+        '#DinlenmekDeBirİş',
+        '#CanınSağOlsun',
+        '#PazartesiBaşlıyorum',
+        '#ÇayKoy',
+        '#NazarDeğmesin'
+    ];
+
+    // =====================================================
+
+    const $ = (id) => document.getElementById(id);
+    const defendant = SANIK_ADI.trim() ? 'Sayın ' + SANIK_ADI.trim() : 'Sayın sanık';
+    $('greeting').textContent = defendant;
+    $('fact-name').textContent = defendant;
+
+    // --- BACKGROUND HEART GENERATOR ---
+    function createHearts() {
+        const container = $('heart-container');
+        const pool = ['❤️', '💖', '❤️', '💖', '🧿', '☕'];
+        for (let i = 0; i < 18; i++) {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.textContent = pool[Math.floor(Math.random() * pool.length)];
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = Math.random() * 5 + 6 + 's';
+            heart.style.animationDelay = Math.random() * 6 + 's';
+            heart.style.fontSize = Math.random() * 18 + 18 + 'px';
+            container.appendChild(heart);
+        }
+    }
+
+    // --- EMOJI EXPLOSION (works from any element) ---
+    function burst(target, emojis, count) {
+        const rect = target.getBoundingClientRect();
+        const startX = rect.left + rect.width / 2;
+        const startY = rect.top + rect.height / 2;
+        const reach = Math.min(window.innerWidth, 700) * 0.5;
+
+        for (let i = 0; i < count; i++) {
+            const el = document.createElement('div');
+            el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+            el.className = 'sparkle';
+            el.style.left = startX + 'px';
+            el.style.top = startY + 'px';
+
+            const angle = Math.random() * Math.PI * 2;
+            const distance = Math.random() * reach + 50;
+            el.style.setProperty('--destX', Math.cos(angle) * distance + 'px');
+            el.style.setProperty('--destY', Math.sin(angle) * distance + 'px');
+
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 1500);
+        }
+    }
+
+    const PARTY = ['✨', '🌸', '💖', '🦄', '🐈', '🌈', '🔥', '💎', '🎉', '🧚‍♀️', '🍭'];
+    const COURT = ['⚖️', '🐾', '🧿', '☕', '💖', '🎉', '🌻', '✨'];
+
+    $('signature').addEventListener('click', (e) => burst(e.currentTarget, PARTY, 35));
+    $('stamp').addEventListener('click', (e) => burst(e.currentTarget, COURT, 28));
+
+    // --- STEP 1: EVIDENCE + METER ---
+    const selected = new Set();
+
+    EVIDENCE.forEach(([emoji, label, reaction], i) => {
+        const li = document.createElement('li');
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'chip';
+        btn.textContent = emoji + ' ' + label;
+        btn.setAttribute('aria-pressed', 'false');
+        btn.addEventListener('click', () => {
+            const on = !selected.has(i);
+            on ? selected.add(i) : selected.delete(i);
+            btn.setAttribute('aria-pressed', String(on));
+            updateMeter();
+            if (on && reaction) $('judge-says').textContent = reaction;
+        });
+        li.appendChild(btn);
+        $('chips').appendChild(li);
+    });
+
+    function updateMeter() {
+        const n = selected.size;
+        const pct = n * 14;   // evet, %100’ü geçiyor. Bilerek.
+        $('meter-pct').textContent = '%' + pct;
+        $('meter-fill').style.width = Math.min(pct, 100) + '%';
+
+        let line = JUDGE_LINES[0][1];
+        for (const [min, text] of JUDGE_LINES) if (n >= min) line = text;
+        $('judge-says').textContent = line;
+
+        if (!$('verdict').hidden) fillVerdict();
+    }
+
+    // --- STEP 2: PLEA ---
+    let objections = 0;
+    const guiltyBtn = $('guilty-btn');
+    const innocentBtn = $('innocent-btn');
+
+    guiltyBtn.addEventListener('click', () => {
+        $('plea-msg').textContent = REJECTIONS[Math.min(objections, REJECTIONS.length - 1)];
+        objections++;
+
+        guiltyBtn.classList.remove('shake');
+        void guiltyBtn.offsetWidth;   // animasyonu yeniden başlat
+        guiltyBtn.classList.add('shake');
+        guiltyBtn.style.transform = 'scale(' + Math.max(0.72, 1 - objections * 0.07) + ')';
+
+        if (objections >= REJECTIONS.length) {
+            guiltyBtn.disabled = true;
+            guiltyBtn.textContent = 'Kapalı, çay molası ☕';
+        }
+    });
+
+    innocentBtn.addEventListener('click', () => {
+        const verdict = $('verdict');
+        fillVerdict();
+        verdict.hidden = false;
+        verdict.classList.remove('show');
+        void verdict.offsetWidth;
+        verdict.classList.add('show');
+
+        $('plea-msg').textContent = 'Savunma kabul edildi. Karar aşağıda.';
+        guiltyBtn.disabled = true;
+
+        const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        verdict.scrollIntoView({ behavior: calm ? 'auto' : 'smooth', block: 'start' });
+        setTimeout(() => burst($('stamp'), COURT, 30), calm ? 0 : 650);
+    });
+
+    // --- STEP 3: VERDICT ---
+    function fillVerdict() {
+        const n = selected.size;
+        const icons = [...selected].sort((a, b) => a - b).map((i) => EVIDENCE[i][0]).join(' ');
+
+        $('fact-evidence').textContent = n ? n + ' adet: ' + icons : 'Sunulmadı (gerek de yok)';
+        $('fact-date').textContent = new Date().toLocaleDateString('tr-TR', {
+            day: 'numeric', month: 'long', year: 'numeric'
+        });
+
+        const basis = n
+            ? 'Sunulan ' + n + ' delil ışığında sanığın “bugün hiçbir şey yapmadım” iddiası asılsız bulunmuştur.'
+            : 'Sanık tek bir delil sunmaya bile üşenmiştir. Mahkeme bunu saygıyla karşılamış, var olmayı yeterli saymıştır.';
+
+        const thoughtOfMe = [...selected].some((i) => EVIDENCE[i][0] === '💭');
+        const bonus = thoughtOfMe
+            ? ' Sanığın gün içinde kâtibi düşündüğü tespit edilmiş, bu husus fazlasıyla lehine değerlendirilmiştir.'
+            : '';
+
+        $('ruling').textContent = basis + bonus +
+            ' Dinlenmek suç değildir. Sanığın beraatine, suçluluk duygusunun süresiz uzaklaştırılmasına' +
+            ' ve sanığın kendine derhal bir çay koymasına karar verilmiştir. Karar kesindir, itiraz yolu kapalıdır.';
+    }
+
+    // --- CONSCIENCE SILENCER ---
+    let lastLine = -1;
+    $('silence-btn').addEventListener('click', (e) => {
+        let i;
+        do { i = Math.floor(Math.random() * SILENCER_LINES.length); } while (i === lastLine);
+        lastLine = i;
+        $('silencer-line').textContent = SILENCER_LINES[i];
+        burst(e.currentTarget, ['💖', '🤫', '☕', '🐾'], 8);
+    });
+
+    // --- HASHTAGS ---
+    let toastTimer;
+    function toast(msg) {
+        const t = $('toast');
+        t.textContent = msg;
+        t.classList.add('on');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => t.classList.remove('on'), 1800);
+    }
+
+    HASHTAGS.forEach((tag) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'tag';
+        btn.textContent = tag;
+        btn.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(tag);
+                toast('Kopyalandı: ' + tag);
+            } catch (err) {
+                toast('Kopyalanamadı. Etikete basılı tutup seç.');
+            }
+        });
+        $('tag-list').appendChild(btn);
+    });
+
+    createHearts();
+</script>
+
+</body>
+</html>
